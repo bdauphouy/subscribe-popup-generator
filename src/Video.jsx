@@ -11,6 +11,9 @@ export const RemotionVideo = () => {
 				fps={60}
 				width={1920}
 				height={1080}
+				defaultProps={{
+					channelId: 'UCKbunxMnqxM8UFMEYF79CUQ',
+				}}
 			/>
 		</>
 	)

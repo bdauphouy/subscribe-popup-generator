@@ -15,14 +15,16 @@ import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import Cursor from './images/cursor.svg'
+import API_KEY from '../API_KEY'
 
-const Container = () => {
+const Popup = ({ channelId }) => {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
 
 	const [notifications, setNotifications] = useState(false)
 	const [subscribed, setSubscribed] = useState(false)
 	const [thumbUp, setThumbUp] = useState(false)
+	const [profilePicture, setProfilePicture] = useState(null)
 
 	useEffect(() => {
 		if (frame < 140) {
@@ -44,18 +46,38 @@ const Container = () => {
 		}
 	}, [frame])
 
+	useEffect(() => {
+		fetch(
+			`https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${API_KEY}`,
+			{
+				method: 'GET',
+			}
+		)
+			.then((res) => res.json())
+			.then((data) =>
+				setProfilePicture(data.items[0].snippet.thumbnails.high.url)
+			)
+	}, [])
+
 	const triggers = {
 		box: 0,
-		subscribe: 20,
-		bell: 30,
-		thumbUp: 40,
-		thumbDown: 50,
+		profilePicture: 20,
+		subscribe: 30,
+		bell: 40,
+		thumbUp: 50,
+		thumbDown: 60,
 	}
 
-	let boxAppear, subscribeAppear, bellAppear, thumbUpAppear, thumbDownAppear
+	let boxAppear,
+		profilePictureAppear,
+		subscribeAppear,
+		bellAppear,
+		thumbUpAppear,
+		thumbDownAppear
 
 	const appears = {
 		box: boxAppear,
+		profilePicture: profilePictureAppear,
 		subscribe: subscribeAppear,
 		bell: bellAppear,
 		thumbUp: thumbUpAppear,
@@ -130,7 +152,7 @@ const Container = () => {
 	const mousePosLeft = interpolate(
 		frame,
 		[100, 130, 150, 200, 220, 270, 320, 350],
-		[30, 25, 25, 55, 55, 70, 70, 80],
+		[40, 34, 34, 60, 60, 75, 75, 85],
 		{
 			easing: Easing.bezier(0.37, 0.37, 0.21, 0.97),
 			extrapolateLeft: 'clamp',
@@ -170,6 +192,20 @@ const Container = () => {
 			}}
 		>
 			<Box scale={appears.box}>
+				{profilePicture && (
+					<Img
+						src={profilePicture}
+						alt="profile picture"
+						style={{
+							height: '70%',
+							position: 'absolute',
+							top: '50%',
+							transform: `translateY(-50%) scale(${appears.profilePicture})`,
+							left: '4rem',
+							borderRadius: '50%',
+						}}
+					/>
+				)}
 				<Sequence from={40} durationInFrames={Infinity}>
 					<Thumbs
 						ratioBarWidth={ratioBarWidth * 100}
@@ -254,17 +290,18 @@ const Container = () => {
 const Box = styled.div`
 	display: flex;
 	background: white;
-	width: 60%;
+	width: 70%;
 	height: 30%;
 	position: relative;
 	border-radius: 4rem;
+	transform: ${(props) => `scale(${props.scale})`};
 `
 
 const SubscribeButton = styled.div`
 	position: absolute;
 	top: 50%;
 	right: 15rem;
-	width: 35%;
+	width: 28%;
 	height: 35%;
 	background: #fe4e4f;
 	border-radius: 1rem;
@@ -285,9 +322,9 @@ const Thumbs = styled.div`
 	position: absolute;
 	top: 50%;
 	padding: 0 2rem;
-	left: 4rem;
+	left: 21rem;
 	display: flex;
-	width: 30%;
+	width: 25%;
 	align-items: center;
 	justify-content: space-between;
 	transform: translateY(-50%);
@@ -314,4 +351,4 @@ const Thumbs = styled.div`
 	}
 `
 
-export default Container
+export default Popup
