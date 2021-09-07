@@ -4,7 +4,7 @@
 	"description": "My Remotion video",
 	"scripts": {
 		"start": "remotion preview src/index.jsx",
-		"build": "remotion render src/index.jsx HelloWorld out.mp4",
+		"build": "remotion render src/index.jsx Popup subscribe-animation.mp4",
 		"upgrade": "remotion upgrade",
 		"server": "node server.mjs",
 		"test": "eslint src --ext ts,tsx,js,jsx"
@@ -12,6 +12,7 @@
 	"repository": {},
 	"license": "UNLICENSED",
 	"dependencies": {
+		"@material-ui/icons": "^4.11.2",
 		"@remotion/bundler": "^2.3.2",
 		"@remotion/cli": "^2.3.2",
 		"@remotion/eslint-config": "^2.3.2",
@@ -21,6 +22,7 @@
 		"prettier": "^2.2.1",
 		"react": "^17.0.2",
 		"react-dom": "^17.0.2",
-		"remotion": "^2.3.2"
+		"remotion": "^2.3.2",
+		"styled-components": "^5.3.1"
 	}
 }
