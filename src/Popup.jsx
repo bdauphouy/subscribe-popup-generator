@@ -7,6 +7,7 @@ import {
 	interpolate,
 	Easing,
 	Img,
+	Audio,
 } from 'remotion'
 import styled from 'styled-components'
 import './fonts/roboto.css'
@@ -16,6 +17,8 @@ import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import Cursor from './images/cursor.svg'
 import API_KEY from '../API_KEY'
+import clickSound from './audio/click-sound.mp3'
+import bellSound from './audio/bell-sound.mp3'
 
 const Popup = ({ channelId }) => {
 	const frame = useCurrentFrame()
@@ -270,6 +273,15 @@ const Popup = ({ channelId }) => {
 							}}
 						/>
 					)}
+				</Sequence>
+				<Sequence from={130} durationInFrames={20}>
+					<Audio src={clickSound} startFrom={60} endAt={80} />
+				</Sequence>
+				<Sequence from={200} durationInFrames={20}>
+					<Audio src={clickSound} startFrom={60} endAt={80} />
+				</Sequence>
+				<Sequence from={270} durationInFrames={40}>
+					<Audio src={bellSound} startFrom={10} endAt={50} />
 				</Sequence>
 			</Box>
 			<Img
