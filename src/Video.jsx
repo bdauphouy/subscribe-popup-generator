@@ -12,7 +12,8 @@ export const RemotionVideo = () => {
 				width={1920}
 				height={1080}
 				defaultProps={{
-					channelId: 'UCKbunxMnqxM8UFMEYF79CUQ',
+					channelUrl:
+						'https://www.youtube.com/channel/UCIHVyohXw6j2T-83-uLngEg',
 				}}
 			/>
 		</>

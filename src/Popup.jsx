@@ -9,18 +9,16 @@ import {
 	Img,
 	Audio,
 } from 'remotion'
-import styled from 'styled-components'
 import './fonts/roboto.css'
 import NotificationsNoneIcon from '@material-ui/icons/NotificationsNone'
 import NotificationsActiveIcon from '@material-ui/icons/NotificationsActive'
 import ThumbUpIcon from '@material-ui/icons/ThumbUp'
 import ThumbDownIcon from '@material-ui/icons/ThumbDown'
 import Cursor from './images/cursor.svg'
-import API_KEY from '../API_KEY'
 import clickSound from './audio/click-sound.mp3'
 import bellSound from './audio/bell-sound.mp3'
 
-const Popup = ({ channelId }) => {
+const Popup = ({ channelUrl }) => {
 	const frame = useCurrentFrame()
 	const { fps } = useVideoConfig()
 
@@ -51,15 +49,13 @@ const Popup = ({ channelId }) => {
 
 	useEffect(() => {
 		fetch(
-			`https://youtube.googleapis.com/youtube/v3/channels?part=snippet&id=${channelId}&key=${API_KEY}`,
+			`https://youtube-channel-thumbnail-and-name-api.ggio.fr/?channel_url=${channelUrl}`,
 			{
 				method: 'GET',
 			}
 		)
 			.then((res) => res.json())
-			.then((data) =>
-				setProfilePicture(data.items[0].snippet.thumbnails.high.url)
-			)
+			.then((data) => setProfilePicture(data.img))
 	}, [])
 
 	const triggers = {
@@ -194,7 +190,18 @@ const Popup = ({ channelId }) => {
 				placeItems: 'center',
 			}}
 		>
-			<Box scale={appears.box}>
+			{/* Box */}
+			<div
+				style={{
+					display: 'flex',
+					background: 'white',
+					width: '70%',
+					height: '30%',
+					position: 'relative',
+					borderRadius: '4rem',
+					transform: `scale(${appears.box})`,
+				}}
+			>
 				{profilePicture && (
 					<Img
 						src={profilePicture}
@@ -209,11 +216,47 @@ const Popup = ({ channelId }) => {
 						}}
 					/>
 				)}
+
+				{/* Thumbs */}
 				<Sequence from={40} durationInFrames={Infinity}>
-					<Thumbs
-						ratioBarWidth={ratioBarWidth * 100}
-						ratioBarFillWidth={ratioBarFillWidth * 100}
+					<div
+						style={{
+							position: 'absolute',
+							top: '50%',
+							padding: '0 2rem',
+							left: '21rem',
+							display: 'flex',
+							width: '25%',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							transform: 'translateY(-50%)',
+						}}
 					>
+						{/* Ratio bar */}
+						<div
+							style={{
+								position: 'absolute',
+								height: '12px',
+								bottom: '-3em',
+								borderRadius: '1rem',
+								background: 'black',
+								width: `${ratioBarWidth * 100}%`,
+								left: 0,
+							}}
+						>
+							<div
+								style={{
+									position: 'absolute',
+									height: '12px',
+									bottom: '-3em',
+									borderRadius: '1rem',
+									background: '#0a84fe',
+									width: `${ratioBarFillWidth * 100}%`,
+									left: 0,
+									top: 0,
+								}}
+							/>
+						</div>
 						<ThumbUpIcon
 							style={{
 								fontSize: 110,
@@ -231,18 +274,36 @@ const Popup = ({ channelId }) => {
 								}deg)`,
 							}}
 						/>
-					</Thumbs>
+					</div>
 				</Sequence>
 
+				{/* Subscribe button */}
 				<Sequence from={20} durationInFrames={Infinity}>
-					<SubscribeButton
-						className={subscribed ? 'sub' : ''}
-						scale={frame >= 210 && frame <= 230 ? bounce : appears.subscribe}
+					<div
+						style={{
+							position: 'absolute',
+							top: '50%',
+							right: '15rem',
+							width: '28%',
+							height: '35%',
+							background: subscribed ? '#615e61' : '#fe4e4f',
+							borderRadius: '1rem',
+							color: 'white',
+							display: 'grid',
+							placeItems: 'center',
+							fontSize: '3.5rem',
+							fontWeight: 500,
+							fontFamily: 'Roboto, sans-serif',
+							transform: `translateY(-50%) scale(${
+								frame >= 210 && frame <= 230 ? bounce : appears.subscribe
+							})`,
+						}}
 					>
 						{subscribed ? 'Subscribed' : 'Subscribe'}
-					</SubscribeButton>
+					</div>
 				</Sequence>
 
+				{/* Bell */}
 				<Sequence from={30} durationInFrames={Infinity}>
 					{notifications ? (
 						<NotificationsActiveIcon
@@ -283,7 +344,7 @@ const Popup = ({ channelId }) => {
 				<Sequence from={270} durationInFrames={40}>
 					<Audio src={bellSound} startFrom={10} endAt={50} />
 				</Sequence>
-			</Box>
+			</div>
 			<Img
 				src={Cursor}
 				alt="cursor"
@@ -298,69 +359,5 @@ const Popup = ({ channelId }) => {
 		</div>
 	)
 }
-
-const Box = styled.div`
-	display: flex;
-	background: white;
-	width: 70%;
-	height: 30%;
-	position: relative;
-	border-radius: 4rem;
-	transform: ${(props) => `scale(${props.scale})`};
-`
-
-const SubscribeButton = styled.div`
-	position: absolute;
-	top: 50%;
-	right: 15rem;
-	width: 28%;
-	height: 35%;
-	background: #fe4e4f;
-	border-radius: 1rem;
-	color: white;
-	display: grid;
-	place-items: center;
-	font-size: 3.5rem;
-	font-weight: 500;
-	font-family: 'Roboto', 'sans-serif';
-	transform: translateY(-50%) ${(props) => `scale(${props.scale})`};
-
-	&.sub {
-		background: #615e61;
-	}
-`
-
-const Thumbs = styled.div`
-	position: absolute;
-	top: 50%;
-	padding: 0 2rem;
-	left: 21rem;
-	display: flex;
-	width: 25%;
-	align-items: center;
-	justify-content: space-between;
-	transform: translateY(-50%);
-
-	&::before,
-	&::after {
-		content: '';
-		position: absolute;
-		height: 12px;
-		bottom: -3em;
-		border-radius: 1rem;
-	}
-
-	&::before {
-		background: black;
-		width: ${(props) => `${props.ratioBarWidth}%`};
-		left: 0;
-	}
-
-	&::after {
-		background: #0a84fe;
-		width: ${(props) => `${props.ratioBarFillWidth}%`};
-		left: 0;
-	}
-`
 
 export default Popup
